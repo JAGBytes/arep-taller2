@@ -4,14 +4,14 @@ Este proyecto implementa un **framework web completo en Java** que evoluciona de
 
 ## Características Principales
 
-###  **Framework de Servicios REST**
+### **Framework de Servicios REST**
 
 - **Método GET estático**: Define servicios REST usando expresiones lambda
 - **Extracción de parámetros**: Acceso fácil a query parameters en las peticiones
 - **Gestión de archivos estáticos**: Configuración flexible de directorios para recursos estáticos
 - **Arquitectura distribuida**: Comprensión profunda del protocolo HTTP y aplicaciones distribuidas
 
-###  **Funcionalidades Implementadas**
+### **Funcionalidades Implementadas**
 
 1. **Servicios REST con Lambda Functions**
 
@@ -66,14 +66,14 @@ Este proyecto implementa un **framework web completo en Java** que evoluciona de
 
 ### **Componentes Principales:**
 
-####  **HttpServer (Núcleo del Framework)**
+#### **HttpServer (Núcleo del Framework)**
 
 - **Puerto**: 35000 por defecto
 - **Procesamiento**: Secuencial (no concurrente)
 - **Protocolos**: HTTP/1.1 completo
 - **Seguridad**: Protección contra path traversal
 
-####  **Métodos del Framework**
+#### **Métodos del Framework**
 
 1. **`get(String path, Function<Request, Response> handler)`**
 
@@ -89,7 +89,7 @@ Este proyecto implementa un **framework web completo en Java** que evoluciona de
    - Configura directorio de archivos estáticos
    - Búsqueda en `target/classes + directory`
 
-#### 📨 **Clases de Soporte**
+#### **Clases de Soporte**
 
 - **Request**: Acceso a parámetros, headers, body JSON
 - **Response**: Constructor de respuestas HTTP con Builder Pattern
@@ -177,11 +177,12 @@ mvn test
 
 ### **Pruebas Implementadas:**
 
-#### ✅ **Servicios REST con Lambda Functions**
+#### **Servicios REST con Lambda Functions**
 
 Para validar el funcionamiento del framework, se crearon **funciones lambda específicas de prueba** en `HttpServerTest.java`:
 
 ```java
+
 // Lambda para servicio de saludo personalizado (pruebas)
 HttpServer.get("/api/hello", (req, res) -> {
     String name = req.getQueryParam("name");
@@ -209,6 +210,7 @@ HttpServer.post("/api/users", (req, res) -> {
     }
     // ... lógica de procesamiento y validación ...
 });
+
 ```
 
 **Servicios principales implementados en App.java:**
@@ -228,21 +230,21 @@ HttpServer.post("/api/users", (req, res) -> {
 - `GET /e` → Número de Euler (App real)
 - `POST /app/hello` → Registro de nuevos usuarios (App real)
 
-#### ✅ **Archivos Estáticos**
+#### **Archivos Estáticos**
 
 - `GET /` → `index.html` (con archivos de prueba creados automáticamente)
 - `GET /style.css` → Archivos CSS con Content-Type correcto
 - `GET /data.json` → Archivos JSON estáticos
 - `GET /subdir/nested.txt` → Archivos en subdirectorios
 
-#### ✅ **Seguridad**
+#### **Seguridad**
 
 - Protección contra path traversal (`../../../etc/passwd`)
 - Validación de URL encoding (`%2E%2E%2F`)
 - Bloqueo de acceso a directorios
 - Validación de rutas canónicas
 
-#### ✅ **Integración Completa**
+#### **Integración Completa**
 
 - Pruebas de servidor completo con lambdas reales
 - Verificación de respuestas HTTP con contenido generado por lambdas
@@ -273,7 +275,6 @@ curl -X POST -H "Content-Type: application/json" \
      "http://localhost:35000/app/hello"
 # Respuesta: {"message": "Hola NuevoUsuario fuiste registrado exitosamente!"}
 ```
-
 
 ---
 
@@ -312,21 +313,19 @@ arep-taller2/
 ### **Protocolo HTTP Implementado:**
 
 - Headers completos (Content-Type, Content-Length)
--  Status codes apropiados (200, 400, 404, 500)
--  Métodos GET y POST
--  JSON parsing
+- Status codes apropiados (200, 400, 404, 500)
+- Métodos GET y POST
+- JSON parsing
 
 ### **Seguridad:**
 
--  Path traversal protection
--  Input validation
--  Canonical path verification
--  Content-Type validation
+- Path traversal protection
+- Input validation
+- Canonical path verification
+- Content-Type validation
 
 ---
 
 ## Autor
 
 **Jorge Andrés Gamboa Sierra**
-
-
