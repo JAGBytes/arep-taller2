@@ -7,7 +7,9 @@ package edu.escuelaing.arem.ASE.app;
 public class App {
 
     public static void main(String[] args) {
-
+        HttpServer.staticfiles("/"); 
+        
+        // GET /app/hello -> Saluda al usuario si está registrado, de lo contrario indica que no lo está
         HttpServer.get("/app/hello", (req, res) -> {
             String name = req.getQueryParam("name");
 
@@ -28,7 +30,8 @@ public class App {
                         .build();
             }
         });
-
+        
+        // GET /pi -> Devuelve el valor de PI
         HttpServer.get("/pi", (req, res) -> {
             return new Response.Builder()
                     .withContentType("text/plain")
@@ -36,13 +39,15 @@ public class App {
                     .build();
         });
 
+        // GET /e -> Devuelve el valor de e
         HttpServer.get("/e", (req, res) -> {
             return new Response.Builder()
                     .withContentType("text/plain")
                     .withBody(String.valueOf(Math.E))
                     .build();
         });
-
+        
+        // POST /app/hello -> Registra un usuario si se envía un JSON válido con el campo "name"
         HttpServer.post("/app/hello", (req, res) -> {
             if (!req.hasBody()) {
                 return new Response.Builder()

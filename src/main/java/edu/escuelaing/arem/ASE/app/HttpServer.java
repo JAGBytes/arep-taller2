@@ -31,8 +31,8 @@ public class HttpServer {
 
     static public int port = 35000;
     private static final HashMap<String, String> users = new HashMap<>();
-    private static final Map<String, BiFunction<Request, Response, Response>> getServices = new HashMap<>();
-    private static final Map<String, BiFunction<Request, Response, Response>> postServices = new HashMap<>();
+    private static Map<String, BiFunction<Request, Response, Response>> getServices = new HashMap<>();
+    private static Map<String, BiFunction<Request, Response, Response>> postServices = new HashMap<>();
     private static String staticFilesDirectory = "";
     private static int idCounter = 1;
 
@@ -65,6 +65,7 @@ public class HttpServer {
      *
      * Este método se ejecuta al iniciar el servidor y registra tres usuarios
      * por defecto: Andres, Maria y Carlos.
+     * Este metodo es solo de prueba para cargar usuarios antes de cargar el servidor.
      */
     public static void loadInitialData() {
         addUser("Andres");
@@ -77,6 +78,7 @@ public class HttpServer {
      *
      * Genera automáticamente un ID único para el usuario y lo almacena en el
      * mapa de usuarios.
+     * Este metodo es solo de prueba para cargar usuarios antes de cargar el servidor.
      *
      * @param name Nombre del usuario a registrar
      */
@@ -166,12 +168,13 @@ public class HttpServer {
     /**
      * Maneja las peticiones HTTP GET.
      *
-     * Procesa peticiones GET para dos tipos de recursos: 1. Servicio de saludo
-     * en "/app/hello" con parámetro name 2. Archivos estáticos desde el
-     * directorio "resources"
+     * Procesa las solicitudes GET de dos maneras:
+     * 1. Si la ruta coincide con un servicio registrado en {@code getServices}, ejecuta su lógica.
+     * 2. Si no coincide, intenta devolver un archivo estático desde el directorio configurado.
+     *    En caso de no encontrarlo, retorna un error 404. Si ocurre un problema interno, retorna 500.
      *
-     * @param uriReq URI de la petición que contiene la ruta y parámetros
-     * @return Array de bytes con la respuesta HTTP completa (headers + body)
+     * @param uriReq URI de la petición que incluye la ruta solicitada y posibles parámetros
+     * @return Array de bytes con la respuesta HTTP completa (encabezados + cuerpo)
      */
     public static byte[] handleGetRequest(URI uriReq) {
 
@@ -219,15 +222,17 @@ public class HttpServer {
     /**
      * Maneja las peticiones HTTP POST.
      *
-     * Procesa peticiones POST al endpoint "/app/hello" para registrar nuevos
-     * usuarios. Espera un cuerpo JSON con el formato: {"name": "NombreUsuario"}
+     * Procesa solicitudes POST de la siguiente manera:
+     * 1. Lee los encabezados de la petición para obtener el valor de Content-Length.
+     * 2. Extrae y construye el cuerpo de la petición a partir de dicho tamaño.
+     * 3. Construye un objeto {@code Request} con la información obtenida.
+     * 4. Si la ruta solicitada está registrada en {@code postServices}, ejecuta el servicio asociado.
+     * 5. Si no existe un servicio para la ruta, devuelve un error 404.
+     * En caso de error de E/S se devuelve 500, y si Content-Length no es válido se devuelve 400.
      *
-     * El método lee el Content-Length del header, extrae el cuerpo de la
-     * petición, parsea el nombre del usuario y lo registra en el sistema.
-     *
-     * @param uriReq URI de la petición
-     * @param in BufferedReader para leer el cuerpo de la petición
-     * @return Array de bytes con la respuesta HTTP
+     * @param uriReq URI de la petición que incluye la ruta solicitada
+     * @param in BufferedReader para leer los encabezados y el cuerpo de la petición
+     * @return Array de bytes con la respuesta HTTP completa (encabezados + cuerpo)
      */
     public static byte[] handlePostRequest(URI uriReq, BufferedReader in) {
 
@@ -313,6 +318,7 @@ public class HttpServer {
     /**
      * Configura la carpeta base donde buscar ficheros estáticos. Ej:
      * staticfiles("/webroot") -> buscará en target/classes/webroot
+     * @param dir directorio donde se ubican los archivos estáticos
      */
     public static void staticfiles(String dir) {
         if (dir == null || dir.isBlank()) {
@@ -327,7 +333,15 @@ public class HttpServer {
     }
 
     /**
-     * Helper para resolver el fichero estático (previene path traversal)
+     * Resuelve la ruta de un archivo estático solicitado.
+     * 
+     * Decodifica la URI, sirve index.html si la ruta es raíz y previene
+     * ataques de path traversal asegurando que el archivo esté dentro
+     * del directorio base configurado.
+     *
+     * @param requestPath Ruta solicitada en la petición
+     * @return Archivo solicitado o {@code null} si es acceso no permitido
+     * @throws IOException Si falla la resolución de rutas
      */
     private static File resolveStaticFile(String requestPath) throws IOException {
         // decodifica %20 y similares
@@ -353,5 +367,12 @@ public class HttpServer {
 
         return requested;
     }
-
+    
+    public Map<String, BiFunction<Request, Response, Response>> getGetServices(){
+        return getServices;
+    }
+            
+    public Map<String, BiFunction<Request, Response, Response>> getPostServices(){
+        return postServices;
+    }
 }

@@ -59,7 +59,6 @@ function loadPiMsg() {
     const xhttp = new XMLHttpRequest();
 
     xhttp.onload = function () {
-        // La respuesta es texto plano (no JSON)
         document.getElementById("pirespmsg").innerHTML = "Valor de π: " + this.responseText;
     };
 

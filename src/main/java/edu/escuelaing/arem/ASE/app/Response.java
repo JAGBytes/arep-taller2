@@ -4,6 +4,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Representa una respuesta HTTP construida por el servidor.
+ * 
+ * Permite definir código de estado, tipo de contenido, cuerpo en texto o bytes,
+ * y encabezados adicionales. Provee métodos para generar la respuesta en el 
+ * formato requerido por el protocolo HTTP (headers + body).
+ */
 public class Response {
 
     private final int status;
@@ -20,7 +27,11 @@ public class Response {
         this.extraHeaders = builder.extraHeaders;
     }
 
-    // Genera solo los headers en bytes
+     /**
+     * Genera solo los headers HTTP en bytes.
+     *
+     * @return headers formateados como arreglo de bytes
+     */
     public byte[] getHeaderBytes() {
         StringBuilder headers = new StringBuilder();
         headers.append("HTTP/1.1 ").append(status).append(" ").append(getStatusText()).append("\r\n");
@@ -39,7 +50,11 @@ public class Response {
         return headers.toString().getBytes(StandardCharsets.UTF_8);
     }
 
-    // Construye la respuesta completa (headers + body)
+     /**
+     * Construye la respuesta completa (headers + body) en bytes.
+     *
+     * @return respuesta HTTP lista para enviar al cliente
+     */
     public byte[] toBytes() {
         byte[] headerBytes = getHeaderBytes();
         int bodyLength = (bodyBytes != null && bodyBytes.length > 0) ? bodyBytes.length : 0;
@@ -55,7 +70,11 @@ public class Response {
         return response;
     }
 
-    // Traduce códigos de estado a texto
+     /**
+     * Traduce un código de estado a su texto correspondiente (ej: 200 -> OK).
+     *
+     * @return descripción textual del estado
+     */
     private String getStatusText() {
         return switch (status) {
             case 200 ->
@@ -90,7 +109,17 @@ public class Response {
 
     }
 
-    // Builder interno
+     /**
+     * Builder para crear instancias de Response de forma flexible.
+     *
+     * Métodos disponibles:
+     * - withStatus(int): establece el código de estado
+     * - withContentType(String): define el tipo de contenido
+     * - withBody(String): cuerpo como texto
+     * - withBodyBytes(byte[]): cuerpo como bytes
+     * - addHeader(String, String): agrega encabezados personalizados
+     * - build(): construye el objeto Response
+     */
     public static class Builder {
 
         private int status = 200;
